@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<servers version="1">
+    <!-- 瓦片最小层级的最小行号，跟minLevel对应 -->
+    <minX>100</minX>
+    <!-- 瓦片最小层级的最小列号，跟minLevel对应 -->
+    <minY>62</minY>
+    <!-- 瓦片最小层级的最大行号，跟minLevel对应（不包括） -->
+    <maxX>102</maxX>
+    <!-- 瓦片最小层级的最大列号，跟minLevel对应（不包括） -->
+    <maxY>64</maxY>
+    <!-- 瓦片的最小层级 -->
+    <minLevel>7</minLevel>
+    <!-- 瓦片的最大层级 -->
+    <maxLevel>14</maxLevel>
+    <!-- 可选择从哪一级开始下，此值介于minLevel和maxLevel之间 -->
+    <currentLevel>7</currentLevel>
+    <!-- 根目录文件夹，必须先创建出来 -->
+    <rootDir>E:\daily_go\learnGO\singapore</rootDir>
+    <!-- mapbox数据地址前缀 -->
+    <preUrl>https://b.tiles.mapbox.com/v4/mapbox.mapbox-streets-v7/</preUrl>
+    <!-- mapbox的token -->
+    <mapboxToken>pk.eyJ1IjoiZHVvZHVvaGFwcHkiLCJhIjoiY2o2eW1xN2F3MXJqZjJxdWh0ajd5amx0byJ9.Z-oJ6o3qQNtCRFa24eqNPg</mapboxToken>
+</servers>
