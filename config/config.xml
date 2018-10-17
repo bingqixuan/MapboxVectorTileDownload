@@ -5,9 +5,9 @@
     <!-- 瓦片最小层级的最小列号，跟minLevel对应 -->
     <minY>0</minY>
     <!-- 瓦片最小层级的最大行号，跟minLevel对应（不包括） -->
-    <maxX>127</maxX>
+    <maxX>1</maxX>
     <!-- 瓦片最小层级的最大列号，跟minLevel对应（不包括） -->
-    <maxY>127</maxY>
+    <maxY>1</maxY>
     <!-- 瓦片的最小层级 -->
     <minLevel>0</minLevel>
     <!-- 瓦片的最大层级 -->
