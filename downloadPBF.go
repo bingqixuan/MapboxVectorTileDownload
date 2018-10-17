@@ -14,6 +14,7 @@ import (
 	"io"
 	"encoding/xml"
 	"io/ioutil"
+	"sync"
 )
 
 type DownloadConfig struct {
@@ -29,6 +30,41 @@ type DownloadConfig struct {
 	RootDir     string   `xml:"rootDir"`
 	PreUrl      string   `xml:"preUrl"`
 	MapboxToken string   `xml:"mapboxToken"`
+}
+
+func handleError(myerr interface{}){
+	logfile, err := os.OpenFile("./error.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0)
+	if err != nil {
+		fmt.Printf("%s\r\n", err.Error())
+		os.Exit(-1)
+	}
+	defer logfile.Close()
+	logger := log.New(logfile, "\r\n", log.Ldate|log.Ltime|log.Llongfile)
+	logger.Println(myerr)
+}
+
+func requestInfo(url string, result string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	// Create New http Transport
+	transCfg := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // disable verify
+	}
+	// Create Http Client
+	client := &http.Client{Transport: transCfg}
+	res, err := client.Get(url)
+	if err != nil {
+		handleError(err)
+		panic(err)
+	}
+
+	f, err := os.Create(result)
+	if err != nil {
+		handleError(err)
+		panic(err)
+	}
+	io.Copy(f, res.Body)
+	res.Body.Close()
 }
 
 func main() {
@@ -54,6 +90,8 @@ func main() {
 		fmt.Printf("error: %v", err)
 		return
 	}
+
+	wg := sync.WaitGroup{}
 
 	var minX = v.MinX         // 瓦片最小层级的最小行号，跟minLevel对应
 	var minY = v.MinY          // 瓦片最小层级的最小列号，跟minLevel对应
@@ -96,24 +134,9 @@ func main() {
 				name := fmt.Sprintf("%d/%d/%d", level, x, y)
 				url := fmt.Sprintf("正在下载%s%s.vector.pbf?access_token=%s", preUrl, name, mapboxToken)
 				fmt.Println(url)
-				// Create New http Transport
-				transCfg := &http.Transport{
-					TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // disable verify
-				}
-				// Create Http Client
-				client := &http.Client{Transport: transCfg}
-				res, err := client.Get(url)
-				if err != nil {
-					fmt.Fprintln(logfile,err)
-					panic(err)
-				}
 				result := fmt.Sprintf("%s/%d/%d/%d.pbf", rootDir, level, x, y)
-				f, err := os.Create(result)
-				if err != nil {
-					fmt.Fprintln(logfile,err)
-					panic(err)
-				}
-				io.Copy(f, res.Body)
+				wg.Add(1)
+				go requestInfo(url, result, &wg)
 			}
 		}
 	}
